@@ -1,0 +1,24 @@
+# Development database only — publishes Postgres on localhost:5432 so the Go API
+# (run with `go run ./cmd/server`) and the npm dev servers can reach it.
+#   docker compose -f docker-compose.dev.yml up -d
+name: merenda-dev
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: merenda
+      POSTGRES_PASSWORD: merenda
+      POSTGRES_DB: merenda
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U merenda"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata_dev:

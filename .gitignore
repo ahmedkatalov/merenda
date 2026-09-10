@@ -1,0 +1,20 @@
+# deps
+node_modules/
+# builds
+dist/
+build/
+backend/bin/
+# env
+.env
+.env.local
+*.local
+# data
+backend/data/
+data/
+# os / editor
+.DS_Store
+.idea/
+.vscode/
+*.log
+# ts
+*.tsbuildinfo

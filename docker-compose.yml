@@ -1,0 +1,95 @@
+# Merenda — production stack. One command brings up everything:
+#   docker compose up -d --build
+#
+# All configuration lives in .env (see .env.production.example). Domains appear
+# ONLY here via ${MERENDA_SITE_DOMAIN} / ${MERENDA_ADMIN_DOMAIN} — nothing is
+# hardcoded, so changing the domain is a .env edit + rebuild of the admin image.
+#
+# For local development use docker-compose.dev.yml (publishes Postgres on 5432)
+# together with the npm dev servers, or just run a standalone Postgres.
+name: merenda
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-merenda}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-merenda}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-merenda}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    # No published port: the database is reachable only inside the compose network.
+
+  api:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      HTTP_ADDR: ":8080"
+      DATABASE_URL: postgres://${POSTGRES_USER:-merenda}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-merenda}?sslmode=disable
+      UPLOAD_DIR: /data/uploads
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL:-15m}
+      REFRESH_TOKEN_TTL: ${REFRESH_TOKEN_TTL:-720h}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?set ADMIN_EMAIL in .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+      ADMIN_NAME: ${ADMIN_NAME:-Владелец}
+      PUBLIC_SITE_URL: https://${MERENDA_SITE_DOMAIN:?set MERENDA_SITE_DOMAIN in .env}
+      ADMIN_SITE_URL: https://${MERENDA_ADMIN_DOMAIN:?set MERENDA_ADMIN_DOMAIN in .env}
+      COOKIE_SECURE: "true"
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
+    volumes:
+      - uploads:/data/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    # No published port: Caddy reaches the API at api:8080 over the internal network.
+
+  site:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - api
+
+  admin:
+    build:
+      context: .
+      dockerfile: admin/Dockerfile
+      args:
+        VITE_SITE_URL: https://${MERENDA_SITE_DOMAIN}
+    restart: unless-stopped
+    depends_on:
+      - api
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      MERENDA_SITE_DOMAIN: ${MERENDA_SITE_DOMAIN}
+      MERENDA_ADMIN_DOMAIN: ${MERENDA_ADMIN_DOMAIN}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+      - site
+      - admin
+
+volumes:
+  pgdata:
+  uploads:
+  caddy_data:
+  caddy_config:

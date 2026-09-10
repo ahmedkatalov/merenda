@@ -1,0 +1,17 @@
+export const qk = {
+  dashboard: ['dashboard'] as const,
+  siteStatus: ['site-status'] as const,
+  menus: ['menus'] as const,
+  categories: (menuId?: string | null) => ['categories', menuId ?? 'all'] as const,
+  products: (filters: Record<string, string | undefined>) => ['products', filters] as const,
+  product: (id: string) => ['product', id] as const,
+  orders: (filters: Record<string, string | number | undefined>) => ['orders', filters] as const,
+  order: (id: string) => ['order', id] as const,
+  schedules: ['schedules'] as const,
+  settings: ['settings'] as const,
+  setting: (key: string) => ['settings', key] as const,
+  sections: ['sections'] as const,
+  media: (filters: Record<string, string | undefined>) => ['media', filters] as const,
+  me: ['auth', 'me'] as const,
+  sessions: ['auth', 'sessions'] as const,
+};

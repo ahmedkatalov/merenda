@@ -1,0 +1,40 @@
+# Merenda reverse proxy. Domains come from the environment (docker-compose passes
+# MERENDA_SITE_DOMAIN / MERENDA_ADMIN_DOMAIN from .env), so this file never needs
+# editing when the domain changes. Caddy obtains and renews TLS certificates
+# automatically via Let's Encrypt for both domains.
+
+# Client site
+{$MERENDA_SITE_DOMAIN} {
+	encode zstd gzip
+
+	# API, uploads and SEO files are served by the Go backend.
+	@backend path /api/* /uploads/* /robots.txt /sitemap.xml /healthz
+	handle @backend {
+		reverse_proxy api:8080
+	}
+
+	# Everything else is the static SPA (nginx serves it, falling back to index.html).
+	handle {
+		reverse_proxy site:80
+	}
+}
+
+# Admin CMS
+{$MERENDA_ADMIN_DOMAIN} {
+	encode zstd gzip
+
+	header {
+		X-Frame-Options "DENY"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+
+	@backend path /api/* /uploads/*
+	handle @backend {
+		reverse_proxy api:8080
+	}
+
+	handle {
+		reverse_proxy admin:80
+	}
+}
