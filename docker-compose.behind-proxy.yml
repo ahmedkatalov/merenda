@@ -1,0 +1,87 @@
+# Merenda WITHOUT its own Caddy — for a server that already runs a reverse proxy
+# (here: the "noor" stack's Caddy on 80/443). Merenda's site/admin/api join the
+# existing proxy network so that proxy can route the Merenda domains to them.
+#   docker compose -f docker-compose.behind-proxy.yml up -d --build
+name: merenda
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-merenda}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-merenda}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      internal:
+        aliases: [merenda-db]   # distinct name so it never clashes with noor's "db"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-merenda}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      HTTP_ADDR: ":8080"
+      DATABASE_URL: postgres://${POSTGRES_USER:-merenda}:${POSTGRES_PASSWORD}@merenda-db:5432/${POSTGRES_DB:-merenda}?sslmode=disable
+      UPLOAD_DIR: /data/uploads
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      ACCESS_TOKEN_TTL: ${ACCESS_TOKEN_TTL:-15m}
+      REFRESH_TOKEN_TTL: ${REFRESH_TOKEN_TTL:-720h}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?set ADMIN_EMAIL in .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+      ADMIN_NAME: ${ADMIN_NAME:-Владелец}
+      PUBLIC_SITE_URL: https://${MERENDA_SITE_DOMAIN:?set MERENDA_SITE_DOMAIN in .env}
+      ADMIN_SITE_URL: https://${MERENDA_ADMIN_DOMAIN:?set MERENDA_ADMIN_DOMAIN in .env}
+      COOKIE_SECURE: "true"
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
+    volumes:
+      - uploads:/data/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      internal: {}
+      web:
+        aliases: [merenda-api]
+
+  site:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      web:
+        aliases: [merenda-site]
+
+  admin:
+    build:
+      context: .
+      dockerfile: admin/Dockerfile
+      args:
+        VITE_SITE_URL: https://${MERENDA_SITE_DOMAIN}
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      web:
+        aliases: [merenda-admin]
+
+networks:
+  internal:
+  web:
+    external: true
+    name: noor_default
+
+volumes:
+  pgdata:
+  uploads:
