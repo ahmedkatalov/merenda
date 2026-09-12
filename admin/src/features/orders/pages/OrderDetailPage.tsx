@@ -158,7 +158,7 @@ export default function OrderDetailPage() {
               }
             >
               {order.whatsappMessage ? (
-                <pre className="whitespace-pre-wrap rounded-xl bg-[#E7FFDB] px-4 py-3 font-sans text-[13.5px] leading-relaxed text-zinc-800 ring-1 ring-inset ring-emerald-200/60">{order.whatsappMessage}</pre>
+                <pre className="whitespace-pre-wrap break-words rounded-xl bg-[#E7FFDB] px-4 py-3 font-sans text-[13.5px] leading-relaxed text-zinc-800 ring-1 ring-inset ring-emerald-200/60">{order.whatsappMessage}</pre>
               ) : (
                 <p className="text-sm text-zinc-500">Сообщение не сформировано.</p>
               )}

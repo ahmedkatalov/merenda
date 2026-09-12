@@ -36,6 +36,7 @@ export function useUploadQueue() {
   const activeRef = useRef(0);
   const uploadedRef = useRef(0);
   const timersRef = useRef(new Set<ReturnType<typeof setTimeout>>());
+  const controllersRef = useRef(new Map<string, AbortController>());
   const invalidate = useInvalidateMedia();
   const invalidateRef = useRef(invalidate);
 
@@ -45,9 +46,12 @@ export function useUploadQueue() {
 
   useEffect(() => {
     const timers = timersRef.current;
+    const controllers = controllersRef.current;
     return () => {
       for (const t of timers) clearTimeout(t);
       timers.clear();
+      for (const c of controllers.values()) c.abort();
+      controllers.clear();
       for (const item of itemsRef.current) URL.revokeObjectURL(item.previewUrl);
     };
   }, []);
@@ -64,6 +68,9 @@ export function useUploadQueue() {
   function dismiss(id: string) {
     const target = itemsRef.current.find((i) => i.id === id);
     if (!target) return;
+    // Abort an in-flight upload; the rejected run() no-ops since the row is already gone.
+    controllersRef.current.get(id)?.abort();
+    controllersRef.current.delete(id);
     URL.revokeObjectURL(target.previewUrl);
     commit(itemsRef.current.filter((i) => i.id !== id));
   }
@@ -85,8 +92,10 @@ export function useUploadQueue() {
   }
 
   async function run(item: UploadItem) {
+    const controller = new AbortController();
+    controllersRef.current.set(item.id, controller);
     try {
-      const media = await mediaApi.upload(item.file, undefined, (fraction) => patch(item.id, { progress: fraction }));
+      const media = await mediaApi.upload(item.file, undefined, (fraction) => patch(item.id, { progress: fraction }), controller.signal);
       useMediaCache.getState().remember(media);
       uploadedRef.current += 1;
       patch(item.id, { status: 'done', progress: 1 });
@@ -96,8 +105,11 @@ export function useUploadQueue() {
       }, DONE_DISMISS_MS);
       timersRef.current.add(t);
     } catch (e) {
+      // A cancelled upload has already been removed from the queue; don't resurrect it as an error.
+      if (controller.signal.aborted) return;
       patch(item.id, { status: 'error', error: errorMessage(e) });
     } finally {
+      controllersRef.current.delete(item.id);
       activeRef.current -= 1;
       if (hasActive()) pump();
       else finishBatch();

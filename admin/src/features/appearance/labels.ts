@@ -1,7 +1,7 @@
 import type { ThemeColors } from '@merenda/shared';
 
 export const COLOR_GROUPS: { title: string; keys: (keyof ThemeColors)[] }[] = [
-  { title: 'Основные', keys: ['primary', 'primaryHover', 'primaryActive', 'onPrimary', 'secondary', 'accent'] },
+  { title: 'Основные', keys: ['primary', 'primaryHover', 'primaryActive', 'onPrimary', 'secondary', 'accent', 'onAccent'] },
   { title: 'Поверхности', keys: ['background', 'surface', 'surfaceAlt', 'border'] },
   { title: 'Текст', keys: ['text', 'textMuted', 'heading'] },
   { title: 'Состояния', keys: ['success', 'warning', 'danger', 'disabled'] },
@@ -14,6 +14,7 @@ export const COLOR_LABELS: Record<keyof ThemeColors, string> = {
   onPrimary: 'Текст на основном',
   secondary: 'Вторичный',
   accent: 'Акцент',
+  onAccent: 'Текст на акценте',
   background: 'Фон страницы',
   surface: 'Карточки',
   surfaceAlt: 'Карточки — альтернативный',

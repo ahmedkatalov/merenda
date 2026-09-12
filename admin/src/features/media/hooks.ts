@@ -52,6 +52,9 @@ export function useDeleteMedia() {
       void qc.invalidateQueries({ queryKey: ['products'] });
       void qc.invalidateQueries({ queryKey: ['categories'] });
       void qc.invalidateQueries({ queryKey: qk.sections });
+      // A deleted image may be referenced by settings (logo/favicon/OG image); refresh them too.
+      void qc.invalidateQueries({ queryKey: qk.settings });
+      void qc.invalidateQueries({ queryKey: qk.dashboard });
       toast.success('Удалено');
     },
     onError: (e) => toast.error(errorMessage(e)),

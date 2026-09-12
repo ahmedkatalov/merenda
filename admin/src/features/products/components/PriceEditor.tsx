@@ -7,9 +7,13 @@ export function PriceEditor({ priceMinor, oldPriceMinor, onSave, saving }: { pri
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState('');
   const ref = useRef<HTMLInputElement>(null);
+  // Guards against the blur handler firing a second time after Enter/Escape already
+  // closed the editor (an input removed from the DOM while focused emits `blur`).
+  const closingRef = useRef(false);
 
   useEffect(() => {
     if (editing) {
+      closingRef.current = false;
       const major = minorToMajor(priceMinor);
       setText(Number.isInteger(major) ? String(major) : major.toFixed(2));
       requestAnimationFrame(() => ref.current?.select());
@@ -17,9 +21,16 @@ export function PriceEditor({ priceMinor, oldPriceMinor, onSave, saving }: { pri
   }, [editing, priceMinor]);
 
   const commit = () => {
+    if (closingRef.current) return;
+    closingRef.current = true;
     const minor = parseMoneyToMinor(text);
     setEditing(false);
     if (minor >= 0 && minor !== priceMinor) onSave(minor);
+  };
+
+  const cancel = () => {
+    closingRef.current = true;
+    setEditing(false);
   };
 
   if (editing) {
@@ -33,8 +44,14 @@ export function PriceEditor({ priceMinor, oldPriceMinor, onSave, saving }: { pri
           onChange={(e) => setText(e.target.value.replace(/[^\d.,]/g, ''))}
           onBlur={commit}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') commit();
-            if (e.key === 'Escape') setEditing(false);
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              commit();
+            } else if (e.key === 'Escape') {
+              e.preventDefault();
+              e.stopPropagation();
+              cancel();
+            }
           }}
           aria-label="Цена"
           className="h-9 w-full rounded-lg border border-brand-500 bg-white px-2.5 pr-7 text-sm tabular-nums outline-none ring-[3px] ring-brand-500/20"

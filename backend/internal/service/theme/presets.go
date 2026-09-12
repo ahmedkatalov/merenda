@@ -25,7 +25,7 @@ func base(preset string, mode string, colors domain.ThemeColors) domain.ThemeSet
 var Elegant = func() domain.ThemeSettings {
 	t := base("elegant", "light", domain.ThemeColors{
 		Primary: "#5B4030", PrimaryHover: "#4A3326", PrimaryActive: "#3A281E", OnPrimary: "#FBF8F2",
-		Secondary: "#8E7A66", Accent: "#B98B4E", Background: "#F5EFE5", Surface: "#FBF8F2", SurfaceAlt: "#EEE5D6",
+		Secondary: "#8E7A66", Accent: "#B98B4E", OnAccent: "#2A2019", Background: "#F5EFE5", Surface: "#FBF8F2", SurfaceAlt: "#EEE5D6",
 		Border: "#E1D5C2", Text: "#2E2620", TextMuted: "#7A6C5F", Heading: "#221A14",
 		Success: "#3E7C4F", Warning: "#C08A2C", Danger: "#B5443C", Disabled: "#C8BEB1",
 	})
@@ -41,7 +41,7 @@ var Elegant = func() domain.ThemeSettings {
 var minimal = func() domain.ThemeSettings {
 	t := base("minimal", "light", domain.ThemeColors{
 		Primary: "#111111", PrimaryHover: "#2A2A2A", PrimaryActive: "#000000", OnPrimary: "#FFFFFF",
-		Secondary: "#6B6B6B", Accent: "#111111", Background: "#FFFFFF", Surface: "#FFFFFF", SurfaceAlt: "#F5F5F5",
+		Secondary: "#6B6B6B", Accent: "#111111", OnAccent: "#FFFFFF", Background: "#FFFFFF", Surface: "#FFFFFF", SurfaceAlt: "#F5F5F5",
 		Border: "#E6E6E6", Text: "#1A1A1A", TextMuted: "#737373", Heading: "#0A0A0A",
 		Success: "#2E7D4F", Warning: "#B7791F", Danger: "#C53030", Disabled: "#D4D4D4",
 	})
@@ -58,7 +58,7 @@ var minimal = func() domain.ThemeSettings {
 var modern = func() domain.ThemeSettings {
 	t := base("modern", "light", domain.ThemeColors{
 		Primary: "#0F172A", PrimaryHover: "#1E293B", PrimaryActive: "#020617", OnPrimary: "#FFFFFF",
-		Secondary: "#64748B", Accent: "#2F6FED", Background: "#F8FAFC", Surface: "#FFFFFF", SurfaceAlt: "#F1F5F9",
+		Secondary: "#64748B", Accent: "#2F6FED", OnAccent: "#FFFFFF", Background: "#F8FAFC", Surface: "#FFFFFF", SurfaceAlt: "#F1F5F9",
 		Border: "#E2E8F0", Text: "#1E293B", TextMuted: "#64748B", Heading: "#0F172A",
 		Success: "#16A34A", Warning: "#D97706", Danger: "#DC2626", Disabled: "#CBD5E1",
 	})
@@ -74,7 +74,7 @@ var modern = func() domain.ThemeSettings {
 var premium = func() domain.ThemeSettings {
 	t := base("premium", "light", domain.ThemeColors{
 		Primary: "#1B1B1B", PrimaryHover: "#2E2E2E", PrimaryActive: "#000000", OnPrimary: "#FAF7F0",
-		Secondary: "#6F6A62", Accent: "#C9A24B", Background: "#FAF7F0", Surface: "#FFFDF8", SurfaceAlt: "#F2EDE2",
+		Secondary: "#6F6A62", Accent: "#C9A24B", OnAccent: "#1B1B1B", Background: "#FAF7F0", Surface: "#FFFDF8", SurfaceAlt: "#F2EDE2",
 		Border: "#E4DCCB", Text: "#2A2A2A", TextMuted: "#7A7469", Heading: "#161616",
 		Success: "#3C7A52", Warning: "#B7791F", Danger: "#A83A32", Disabled: "#D3CDC1",
 	})
@@ -91,7 +91,7 @@ var premium = func() domain.ThemeSettings {
 var soft = func() domain.ThemeSettings {
 	t := base("soft", "light", domain.ThemeColors{
 		Primary: "#B56A4F", PrimaryHover: "#A25D44", PrimaryActive: "#8E503A", OnPrimary: "#FFFFFF",
-		Secondary: "#9C8B80", Accent: "#E0A458", Background: "#FBF6F2", Surface: "#FFFFFF", SurfaceAlt: "#F6ECE5",
+		Secondary: "#9C8B80", Accent: "#E0A458", OnAccent: "#3D3430", Background: "#FBF6F2", Surface: "#FFFFFF", SurfaceAlt: "#F6ECE5",
 		Border: "#EEDFD5", Text: "#3D3430", TextMuted: "#8A7B72", Heading: "#2E2622",
 		Success: "#4C9A6A", Warning: "#D8973C", Danger: "#C9564D", Disabled: "#DACFC7",
 	})
@@ -108,7 +108,7 @@ var soft = func() domain.ThemeSettings {
 var dark = func() domain.ThemeSettings {
 	t := base("dark", "dark", domain.ThemeColors{
 		Primary: "#D4A960", PrimaryHover: "#E0B872", PrimaryActive: "#C1984F", OnPrimary: "#151311",
-		Secondary: "#9A9086", Accent: "#D4A960", Background: "#131211", Surface: "#1C1A18", SurfaceAlt: "#262320",
+		Secondary: "#9A9086", Accent: "#D4A960", OnAccent: "#151311", Background: "#131211", Surface: "#1C1A18", SurfaceAlt: "#262320",
 		Border: "#302C28", Text: "#E8E3DB", TextMuted: "#A39B90", Heading: "#F5F1EA",
 		Success: "#5FB27C", Warning: "#E0A84C", Danger: "#E06C62", Disabled: "#4A443E",
 	})

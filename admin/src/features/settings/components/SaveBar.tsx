@@ -16,7 +16,7 @@ export function SaveBar({ dirty, saving, onReset, className }: SaveBarProps) {
   return (
     <div
       className={cn(
-        'sticky bottom-0 z-10 -mx-4 mt-6 border-t border-zinc-200 bg-white/90 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8',
+        'sticky bottom-0 z-10 -mx-4 -mb-[max(1.5rem,env(safe-area-inset-bottom))] mt-6 border-t border-zinc-200 bg-white/90 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8',
         className,
       )}
     >

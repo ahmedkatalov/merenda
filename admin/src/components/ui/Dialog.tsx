@@ -71,7 +71,7 @@ export function Dialog({ open, onClose, title, description, children, footer, si
           )}
           <div className={cn('min-h-0 flex-1 overflow-y-auto scrollbar-thin', !flush && 'px-5 py-4 sm:px-6')}>{children}</div>
           {footer && (
-            <div className="flex flex-col-reverse gap-2 border-t border-zinc-100 px-5 py-3.5 sm:flex-row sm:items-center sm:justify-end sm:px-6 [&>button]:w-full sm:[&>button]:w-auto">
+            <div className="flex flex-col-reverse gap-2 border-t border-zinc-100 px-5 pt-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:justify-end sm:px-6 sm:pb-3.5 [&>button]:w-full sm:[&>button]:w-auto">
               {footer}
             </div>
           )}

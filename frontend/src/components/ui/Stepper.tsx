@@ -25,7 +25,7 @@ export function Stepper({ value, min = 1, max = 99, onChange, size = 'md', remov
       role="group"
       aria-label={t.menu.quantity}
     >
-      <button type="button" className={btn} onClick={() => onChange(value - 1)} disabled={atMin && !removable} aria-label={t.a11y.decrease}>
+      <button type="button" className={btn} onClick={() => onChange(value - 1)} disabled={atMin && !removable} aria-label={atMin && removable ? t.cart.remove : t.a11y.decrease}>
         {atMin && removable ? <Trash2 className="size-4" /> : <Minus className="size-4" />}
       </button>
       <span className={cn('min-w-8 text-center font-semibold tabular-nums', size === 'sm' && 'text-[0.9375rem]')} aria-live="polite">

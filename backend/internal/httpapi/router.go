@@ -114,6 +114,7 @@ func New(d handlers.Deps, uploads http.Handler) http.Handler {
 					r.Delete("/products/{id}", h.DeleteProduct)
 
 					r.Get("/media", h.ListMedia)
+					r.Get("/media/{id}", h.GetMedia)
 					r.Patch("/media/{id}", h.UpdateMedia)
 					r.Delete("/media/{id}", h.DeleteMedia)
 

@@ -373,6 +373,8 @@ export interface ThemeColors {
   onPrimary: string;
   secondary: string;
   accent: string;
+  /** Text/icon color on top of the accent color. */
+  onAccent: string;
   background: string;
   surface: string;
   surfaceAlt: string;

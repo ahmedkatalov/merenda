@@ -107,7 +107,7 @@ func Validate(t domain.ThemeSettings) error {
 func validateColors(c domain.ThemeColors, f domain.Fields) {
 	colors := map[string]string{
 		"primary": c.Primary, "primaryHover": c.PrimaryHover, "primaryActive": c.PrimaryActive, "onPrimary": c.OnPrimary,
-		"secondary": c.Secondary, "accent": c.Accent, "background": c.Background, "surface": c.Surface, "surfaceAlt": c.SurfaceAlt,
+		"secondary": c.Secondary, "accent": c.Accent, "onAccent": c.OnAccent, "background": c.Background, "surface": c.Surface, "surfaceAlt": c.SurfaceAlt,
 		"border": c.Border, "text": c.Text, "textMuted": c.TextMuted, "heading": c.Heading,
 		"success": c.Success, "warning": c.Warning, "danger": c.Danger, "disabled": c.Disabled,
 	}

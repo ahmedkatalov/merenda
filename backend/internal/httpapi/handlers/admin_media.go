@@ -22,6 +22,13 @@ func (h *Handlers) ListMedia(w http.ResponseWriter, r *http.Request) {
 	result(w, r, http.StatusOK, out, err)
 }
 
+// GetMedia returns a single media object by id (used to resolve references
+// outside the media library's first page).
+func (h *Handlers) GetMedia(w http.ResponseWriter, r *http.Request) {
+	out, err := h.Media.Get(r.Context(), param(r, "id"))
+	result(w, r, http.StatusOK, out, err)
+}
+
 // UploadMedia accepts multipart `file` (+ optional `alt`).
 func (h *Handlers) UploadMedia(w http.ResponseWriter, r *http.Request) {
 	limit := h.Media.MaxBytes() + MultipartOverhead

@@ -8,6 +8,7 @@ type ThemeColors struct {
 	OnPrimary     string `json:"onPrimary"`
 	Secondary     string `json:"secondary"`
 	Accent        string `json:"accent"`
+	OnAccent      string `json:"onAccent"`
 	Background    string `json:"background"`
 	Surface       string `json:"surface"`
 	SurfaceAlt    string `json:"surfaceAlt"`

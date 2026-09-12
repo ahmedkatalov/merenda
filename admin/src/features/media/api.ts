@@ -17,6 +17,7 @@ export const mediaApi = {
     if (alt) fd.append('alt', alt);
     return uploadWithProgress<Media>('/media', fd, onProgress, signal);
   },
+  get: (id: string, signal?: AbortSignal) => admin.get<Media>(`/media/${id}`, undefined, signal),
   updateAlt: (id: string, alt: string) => admin.patch<Media>(`/media/${id}`, { alt }),
   remove: (id: string) => admin.delete(`/media/${id}`),
 };

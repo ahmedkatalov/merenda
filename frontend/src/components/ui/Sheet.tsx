@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useDragControls, type PanInfo } from 'motion/react';
 import { X } from 'lucide-react';
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, type KeyboardEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/cn';
 import { useBodyScrollLock, useEscape, useIsTabletUp } from '@/lib/hooks';
@@ -48,6 +48,33 @@ export function Sheet({ open, onClose, mode = 'auto', title, children, footer, s
     if (info.offset.y > 110 || info.velocity.y > 600) onClose();
   };
 
+  /** Keep Tab focus inside the dialog (no native <dialog>, so trap manually). */
+  const trapFocus = useCallback((e: KeyboardEvent<HTMLDivElement>): void => {
+    if (e.key !== 'Tab') return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const focusable = Array.from(
+      panel.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
+    ).filter((el) => el.getClientRects().length > 0);
+    if (focusable.length === 0) {
+      e.preventDefault();
+      panel.focus({ preventScroll: true });
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement;
+    if (e.shiftKey && (active === first || active === panel)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }, []);
+
   const motionProps =
     variant === 'bottom'
       ? { initial: { y: '100%' }, animate: { y: 0 }, exit: { y: '100%' }, transition: SPRING }
@@ -74,6 +101,7 @@ export function Sheet({ open, onClose, mode = 'auto', title, children, footer, s
           <motion.button
             type="button"
             aria-label={t.common.close}
+            tabIndex={-1}
             className="absolute inset-0 bg-black/45 backdrop-blur-[2px]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -87,11 +115,12 @@ export function Sheet({ open, onClose, mode = 'auto', title, children, footer, s
             aria-modal="true"
             aria-label={typeof title === 'string' ? title : ariaLabel}
             tabIndex={-1}
+            onKeyDown={trapFocus}
             className={cn(
               'relative flex max-h-full flex-col bg-surface-solid text-body shadow-elevated outline-none',
               variant === 'bottom' && 'w-full max-h-[calc(100dvh-1.5rem)] rounded-t-[max(var(--radius-card),16px)] safe-bottom',
               variant === 'modal' && cn('w-full rounded-card max-h-[90dvh]', size === 'lg' ? 'max-w-2xl' : 'max-w-lg'),
-              variant === 'drawer' && cn('h-dvh w-full', size === 'lg' ? 'max-w-xl' : 'max-w-md'),
+              variant === 'drawer' && cn('h-dvh w-full safe-bottom', size === 'lg' ? 'max-w-xl' : 'max-w-md'),
             )}
             drag={variant === 'bottom' ? 'y' : false}
             dragControls={dragControls}

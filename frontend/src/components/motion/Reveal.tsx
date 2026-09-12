@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import type { ReactNode } from 'react';
 import { isPreview } from '@/app/preview';
 
@@ -9,9 +9,14 @@ interface Props {
   as?: 'div' | 'section' | 'article' | 'li';
 }
 
-/** Fade + rise once when entering the viewport. Disabled in preview so admins see instant updates. */
+/**
+ * Fade + rise once when entering the viewport. Renders the final (visible)
+ * state directly in preview and under prefers-reduced-motion, so content is
+ * never left hidden if the reveal animation cannot run.
+ */
 export function Reveal({ children, className, delay = 0, as = 'div' }: Props) {
-  if (isPreview) {
+  const reduce = useReducedMotion();
+  if (isPreview || reduce) {
     const Tag = as;
     return <Tag className={className}>{children}</Tag>;
   }

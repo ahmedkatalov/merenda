@@ -41,7 +41,7 @@ function MenuSkeleton() {
 }
 
 export function MenuSection({ section, anchorId }: { section: PageSection; anchorId: string }) {
-  const s = getSectionSettings<'menu'>(section);
+  const s = useMemo(() => getSectionSettings<'menu'>(section), [section]);
   const { menu, menuState, status } = useSiteData();
   const { venue: ordering } = useOrdering();
   const menus = useMemo(() => visibleMenus(menu?.menus ?? [], s), [menu, s]);

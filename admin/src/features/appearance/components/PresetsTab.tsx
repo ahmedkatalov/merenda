@@ -30,7 +30,7 @@ export function PresetsTab({ draft }: { draft: ThemeSettings }) {
                   <div className="h-1.5 w-1/2 rounded-full" style={{ background: c.textMuted }} />
                 </div>
                 <div className="flex items-center pr-3">
-                  <div className="h-6 w-14 rounded-md" style={{ background: c.primary, borderRadius: Math.min(p.theme.shape.radiusButton, 12) }} />
+                  <div className="h-6 w-14" style={{ background: c.primary, borderRadius: Math.min(p.theme.shape.radiusButton, 12) }} />
                 </div>
               </div>
               <div className="min-w-0">

@@ -18,8 +18,10 @@ export function useSaveSetting<K extends SettingsKey>(key: K, options: { silent?
   return useMutation({
     mutationFn: (value: SettingsMap[K]) => settingsApi.put(key, value),
     onSuccess: (saved) => {
+      // Write the fresh value straight into the cache. Note we must NOT invalidate the
+      // whole `['settings']` tree here — that prefix-matches this key and would refetch
+      // the value we just set (and every other loaded settings key). Keys are independent.
       qc.setQueryData(qk.setting(key), saved);
-      void qc.invalidateQueries({ queryKey: qk.settings });
       void qc.invalidateQueries({ queryKey: qk.dashboard });
       if (key === 'status') void qc.invalidateQueries({ queryKey: qk.siteStatus });
       if (!options.silent) toast.success(options.successMessage ?? 'Сохранено');

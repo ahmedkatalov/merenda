@@ -68,7 +68,13 @@ export function Seo() {
     upsertLink('canonical', canonical);
 
     const og = media(seo.ogImageId);
-    upsertMeta('property', 'og:image', og ? toAbsolute(mediaUrl(og.mediumUrl || og.url)) : null);
+    const ogImage = og ? toAbsolute(mediaUrl(og.mediumUrl || og.url)) : null;
+    upsertMeta('property', 'og:image', ogImage);
+
+    upsertMeta('name', 'twitter:card', ogImage ? 'summary_large_image' : 'summary');
+    upsertMeta('name', 'twitter:title', title);
+    upsertMeta('name', 'twitter:description', seo.description || business.description || null);
+    upsertMeta('name', 'twitter:image', ogImage);
 
     const favicon = media(business.faviconId);
     const letter = (business.name.trim().charAt(0) || '•').toUpperCase();

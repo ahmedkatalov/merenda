@@ -51,7 +51,7 @@ function SiteShell() {
   return (
     <>
       <Seo />
-      <div className={cn('flex min-h-dvh flex-col', showPill && 'pb-24 md:pb-0')}>
+      <div className={cn('flex min-h-dvh flex-col', showPill && 'cart-pill-space')}>
         <SectionRenderer />
       </div>
       {ordering.enabled ? <CartPill /> : null}

@@ -84,6 +84,7 @@ Products
 
 Media
 | GET | `/media?kind=&q=&page=&perPage=` | → `Paginated<Media>` (newest first) |
+| GET | `/media/:id` | → `Media` (resolve a single reference outside the first page) |
 | POST | `/media` | multipart `file` (+ optional `alt`) → `Media` (201). Allowed: image/jpeg, image/png, image/webp, image/gif; sniffed, not trusted from extension. Max `MAX_UPLOAD_MB`. Images get thumb (≤480) and medium (≤1400) variants; GIFs are stored as-is. |
 | PATCH | `/media/:id` | `{ alt }` → `Media` |
 | DELETE | `/media/:id` | → 204 (references become null via FK) |

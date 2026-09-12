@@ -8,6 +8,6 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   const authed = useIsAuthenticated();
   const location = useLocation();
   if (!booted) return <FullScreenSpinner label="Загружаем…" />;
-  if (!authed) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  if (!authed) return <Navigate to="/login" replace state={{ from: `${location.pathname}${location.search}` }} />;
   return <>{children}</>;
 }

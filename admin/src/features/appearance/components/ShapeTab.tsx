@@ -1,13 +1,18 @@
+import { useRef } from 'react';
 import type { ThemeSettings } from '@merenda/shared';
 import { Checkbox, Slider } from '@/components/ui';
 import { useThemeDraft } from '../store';
 
 const PILL = 999;
+const DEFAULT_BUTTON_RADIUS = 12;
 
 export function ShapeTab({ draft }: { draft: ThemeSettings }) {
   const patch = useThemeDraft((s) => s.patch);
   const s = draft.shape;
   const pill = s.radiusButton >= PILL;
+  // Remember the last non-pill radius so unchecking "pill" restores it instead of a fixed default.
+  const lastRadius = useRef(pill ? DEFAULT_BUTTON_RADIUS : s.radiusButton);
+  if (!pill) lastRadius.current = s.radiusButton;
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-4 rounded-xl border border-zinc-200 p-4" style={{ background: draft.colors.background }}>
@@ -25,7 +30,7 @@ export function ShapeTab({ draft }: { draft: ThemeSettings }) {
 
       <div className="space-y-2">
         <Slider label="Скругление кнопок" min={0} max={32} step={1} unit=" px" value={pill ? 32 : s.radiusButton} onChange={(v) => patch('shape', { radiusButton: v })} disabled={pill} format={(v) => (pill ? 'Pill' : `${v} px`)} />
-        <Checkbox label="Круглые кнопки (pill)" checked={pill} onChange={(e) => patch('shape', { radiusButton: e.target.checked ? PILL : 12 })} />
+        <Checkbox label="Круглые кнопки (pill)" checked={pill} onChange={(e) => patch('shape', { radiusButton: e.target.checked ? PILL : lastRadius.current })} />
       </div>
       <Slider label="Скругление карточек" min={0} max={32} step={1} unit=" px" value={s.radiusCard} onChange={(v) => patch('shape', { radiusCard: v })} />
       <Slider label="Скругление изображений" min={0} max={32} step={1} unit=" px" value={s.radiusImage} onChange={(v) => patch('shape', { radiusImage: v })} />

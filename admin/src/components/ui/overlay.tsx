@@ -16,18 +16,31 @@ export function useScrollLock(active: boolean) {
   }, [active]);
 }
 
+/** Ordered stack of open overlays, so Escape only closes the topmost one. */
+const escapeStack: symbol[] = [];
+
 export function useEscape(active: boolean, onEscape: () => void) {
+  const handler = useRef(onEscape);
+  handler.current = onEscape;
   useEffect(() => {
     if (!active) return;
+    const token = Symbol('overlay');
+    escapeStack.push(token);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation();
-        onEscape();
-      }
+      if (e.key !== 'Escape') return;
+      // Only the last-opened overlay reacts, so a dialog nested in a drawer
+      // (e.g. the media picker) does not also close its parent.
+      if (escapeStack[escapeStack.length - 1] !== token) return;
+      e.stopPropagation();
+      handler.current();
     };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [active, onEscape]);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      const i = escapeStack.lastIndexOf(token);
+      if (i >= 0) escapeStack.splice(i, 1);
+    };
+  }, [active]);
 }
 
 /** Keep the element mounted for `ms` after `open` turns false so the exit animation can play. */

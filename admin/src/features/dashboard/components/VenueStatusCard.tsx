@@ -34,10 +34,10 @@ export function VenueStatusCard({ status, onToggle }: { status: SiteStatus; onTo
         <ul className="mt-4 divide-y divide-zinc-100 rounded-xl border border-zinc-100">
           {status.schedules.map((s) => (
             <li key={s.scheduleId} className="flex items-center justify-between gap-3 px-3 py-2.5">
-              <div className="flex items-center gap-2 text-sm">
-                <Clock className="size-4 text-zinc-400" />
-                <span className="font-medium text-zinc-800">{s.name}</span>
-                <span className="hidden text-zinc-500 sm:inline">· {s.message}</span>
+              <div className="flex min-w-0 items-center gap-2 text-sm">
+                <Clock className="size-4 shrink-0 text-zinc-400" />
+                <span className="shrink-0 font-medium text-zinc-800">{s.name}</span>
+                <span className="hidden truncate text-zinc-500 sm:inline">· {s.message}</span>
               </div>
               <Badge tone={s.isOpen ? 'success' : 'neutral'} size="sm">
                 {s.isOpen ? 'Открыто' : 'Закрыто'}

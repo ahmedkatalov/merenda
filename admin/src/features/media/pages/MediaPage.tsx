@@ -149,7 +149,7 @@ export default function MediaPage() {
                 />
               </div>
             ) : (
-              <div className="rounded-[var(--radius-card)] border-2 border-dashed border-zinc-200 bg-white transition-colors hover:border-zinc-300">
+              <div className="rounded-[var(--radius-card)] border border-dashed border-zinc-200 bg-white transition-colors hover:border-zinc-300">
                 <EmptyState
                   icon={<ImageOff />}
                   title="Пока пусто"

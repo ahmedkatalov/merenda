@@ -15,6 +15,7 @@ export function ColorsTab({ draft }: { draft: ThemeSettings }) {
           <p className="text-[12px] text-zinc-500">Влияет на тени и системные элементы.</p>
         </div>
         <SegmentedControl<ThemeSettings['mode']>
+          aria-label="Цветовая схема"
           size="sm"
           value={draft.mode}
           onChange={setMode}

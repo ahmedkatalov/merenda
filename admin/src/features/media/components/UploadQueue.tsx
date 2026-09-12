@@ -1,6 +1,6 @@
-import { CircleAlert, CircleCheck, Clock } from 'lucide-react';
+import { CircleAlert, CircleCheck, Clock, X } from 'lucide-react';
 import { cn, formatBytes, pluralize } from '@/lib/utils';
-import { Button, Spinner } from '@/components/ui';
+import { Button, IconButton, Spinner } from '@/components/ui';
 import type { UploadItem } from './useUploadQueue';
 
 const FILE_FORMS: [string, string, string] = ['файл', 'файла', 'файлов'];
@@ -78,6 +78,11 @@ function UploadRow({ item, onDismiss }: { item: UploadItem; onDismiss: () => voi
           </span>
         )}
         {item.status === 'uploading' && <span className="w-9 text-right text-[12px] tabular-nums text-zinc-500">{pct}%</span>}
+        {(item.status === 'queued' || item.status === 'uploading') && (
+          <IconButton label="Отменить загрузку" size="sm" className="text-zinc-400 hover:text-red-600" onClick={onDismiss}>
+            <X />
+          </IconButton>
+        )}
         {done && (
           <>
             <CircleCheck className="size-[18px] text-emerald-500" aria-hidden="true" />

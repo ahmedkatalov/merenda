@@ -90,7 +90,7 @@ export default function ProductSheet() {
               type="button"
               onClick={close}
               aria-label={t.common.close}
-              className="absolute right-3 top-3 flex size-10 items-center justify-center rounded-full bg-surface-solid/90 text-heading shadow-card backdrop-blur"
+              className="absolute right-3 top-3 flex size-11 items-center justify-center rounded-full bg-surface-solid/90 text-heading shadow-card backdrop-blur"
             >
               <span aria-hidden className="text-xl leading-none">×</span>
             </button>

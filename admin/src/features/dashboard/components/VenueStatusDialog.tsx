@@ -26,7 +26,7 @@ export function VenueStatusDialog({ open, onClose, current }: { open: boolean; o
       locked={mutation.isPending}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} disabled={mutation.isPending}>
             Отмена
           </Button>
           <Button variant={closing ? 'danger' : 'primary'} loading={mutation.isPending} onClick={submit}>

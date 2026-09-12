@@ -82,6 +82,7 @@ export function MediaPicker({ open, onClose, onSelect, accept = 'any', title = '
         <Input prefix={<Search />} type="search" placeholder="Поиск по названию…" value={q} onChange={(e) => setQ(e.target.value)} className="flex-1" />
         {accept === 'any' && (
           <SegmentedControl<KindFilter>
+            aria-label="Тип медиа"
             value={kind}
             onChange={setKind}
             size="sm"

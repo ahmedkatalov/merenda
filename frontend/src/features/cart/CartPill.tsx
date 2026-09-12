@@ -38,7 +38,7 @@ export function CartPill() {
             <span className="flex items-center gap-2.5">
               <span className="relative flex size-8 items-center justify-center rounded-full bg-white/15">
                 <ShoppingBag className="size-4" />
-                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[0.625rem] font-bold text-white">
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[0.625rem] font-bold text-on-accent">
                   {count}
                 </span>
               </span>

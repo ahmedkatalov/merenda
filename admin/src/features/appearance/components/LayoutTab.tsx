@@ -9,15 +9,16 @@ export function LayoutTab({ draft }: { draft: ThemeSettings }) {
   return (
     <div className="space-y-5">
       <FormField label="Плотность" help="Расстояния между блоками и внутри карточек.">
-        <SegmentedControl<ThemeSettings['layout']['density']> fullWidth value={l.density} onChange={(v) => patch('layout', { density: v })} options={DENSITY_OPTIONS.map((o) => ({ value: o.value, label: o.label }))} />
+        <SegmentedControl<ThemeSettings['layout']['density']> aria-label="Плотность" fullWidth value={l.density} onChange={(v) => patch('layout', { density: v })} options={DENSITY_OPTIONS.map((o) => ({ value: o.value, label: o.label }))} />
       </FormField>
       <Slider label="Максимальная ширина контента" min={960} max={1400} step={20} unit=" px" value={l.maxWidth} onChange={(v) => patch('layout', { maxWidth: v })} />
       <FormField label="Стиль кнопок">
-        <SegmentedControl<ThemeSettings['layout']['buttonStyle']> fullWidth value={l.buttonStyle} onChange={(v) => patch('layout', { buttonStyle: v })} options={BUTTON_STYLE_OPTIONS.map((o) => ({ value: o.value, label: o.label }))} />
+        <SegmentedControl<ThemeSettings['layout']['buttonStyle']> aria-label="Стиль кнопок" fullWidth value={l.buttonStyle} onChange={(v) => patch('layout', { buttonStyle: v })} options={BUTTON_STYLE_OPTIONS.map((o) => ({ value: o.value, label: o.label }))} />
       </FormField>
       <div className="flex gap-2 rounded-xl border border-zinc-200 p-4" style={{ background: draft.colors.background }}>
         {(['solid', 'soft', 'outline'] as const).map((style) => {
           const active = l.buttonStyle === style;
+          const styleLabel = BUTTON_STYLE_OPTIONS.find((o) => o.value === style)?.label ?? style;
           const base: React.CSSProperties = { borderRadius: draft.shape.radiusButton, opacity: active ? 1 : 0.45 };
           const styles: Record<typeof style, React.CSSProperties> = {
             solid: { background: draft.colors.primary, color: draft.colors.onPrimary },
@@ -25,7 +26,7 @@ export function LayoutTab({ draft }: { draft: ThemeSettings }) {
             outline: { border: `1.5px solid ${draft.colors.primary}`, color: draft.colors.primary },
           };
           return (
-            <button key={style} type="button" onClick={() => patch('layout', { buttonStyle: style })} className="flex h-9 flex-1 items-center justify-center text-[12px] font-medium" style={{ ...base, ...styles[style] }}>
+            <button key={style} type="button" onClick={() => patch('layout', { buttonStyle: style })} aria-label={`Стиль кнопок: ${styleLabel}`} aria-pressed={active} title={styleLabel} className="flex h-9 flex-1 items-center justify-center text-[12px] font-medium focus-ring" style={{ ...base, ...styles[style] }}>
               В корзину
             </button>
           );

@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { ArrowDown, Clock } from 'lucide-react';
 import { getSectionSettings, type PageSection } from '@merenda/shared';
 import { Button, ButtonLink } from '@/components/ui/Button';
@@ -27,7 +27,9 @@ export function Hero({ section, anchorId }: { section: PageSection; anchorId: st
   const layout = s.layout === 'split' && !visual ? 'centered' : s.layout;
   const cover = layout === 'cover';
   const closed = status.venue.mode === 'temporarily_closed';
-  const anim = (delay: number) => (isPreview ? {} : rise(delay));
+  const reduce = useReducedMotion();
+  const still = isPreview || reduce;
+  const anim = (delay: number) => (still ? {} : rise(delay));
 
   const minH = cover
     ? { compact: 'min-h-[42vh]', normal: 'min-h-[62vh]', tall: 'min-h-[calc(100dvh-var(--header-h))]' }[s.height]
@@ -118,7 +120,7 @@ export function Hero({ section, anchorId }: { section: PageSection; anchorId: st
       <Container className={cn(layout === 'split' && 'grid items-center gap-10 md:grid-cols-[1.1fr_1fr] md:gap-14')}>
         {text}
         {layout === 'split' && visual ? (
-          <motion.div {...(isPreview ? {} : { initial: { opacity: 0, scale: 0.97 }, animate: { opacity: 1, scale: 1 }, transition: { duration: 0.6, ease: EASE, delay: 0.1 } })} className="relative mx-auto w-full max-w-md md:max-w-none">
+          <motion.div {...(still ? {} : { initial: { opacity: 0, scale: 0.97 }, animate: { opacity: 1, scale: 1 }, transition: { duration: 0.6, ease: EASE, delay: 0.1 } })} className="relative mx-auto w-full max-w-md md:max-w-none">
             <div className="absolute -inset-3 rounded-[calc(var(--radius-card)+12px)] border border-accent/30" aria-hidden />
             <MediaImage media={visual} aspectClass="aspect-[4/5] md:aspect-[5/6]" prefer="medium" sizes="(min-width: 768px) 45vw, 100vw" className="shadow-elevated rounded-card" eager />
           </motion.div>

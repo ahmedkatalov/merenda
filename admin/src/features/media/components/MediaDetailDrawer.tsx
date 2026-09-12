@@ -136,7 +136,7 @@ function DetailBody({ media }: { media: Media }) {
         {(id) => (
           <div className="flex gap-2">
             <Input id={id} readOnly value={url} onFocus={(e) => e.currentTarget.select()} className="min-w-0 flex-1 font-mono text-[12.5px]" />
-            <IconButton label="Копировать" variant="secondary" onClick={() => void copy()} className={copied ? 'text-emerald-600' : undefined}>
+            <IconButton label={copied ? 'Скопировано' : 'Копировать ссылку'} variant="secondary" onClick={() => void copy()} className={copied ? 'text-emerald-600' : undefined}>
               {copied ? <Check /> : <Copy />}
             </IconButton>
             <IconButton label="Открыть в новой вкладке" variant="secondary" onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}>

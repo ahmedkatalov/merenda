@@ -21,7 +21,8 @@ function Thumb({ id, onRemove }: { id: string; onRemove: () => void }) {
           GIF
         </Badge>
       )}
-      <button type="button" onClick={onRemove} aria-label="Убрать" className="absolute right-1 top-1 inline-flex size-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity hover:bg-black/80 group-hover:opacity-100 focus:opacity-100 focus-ring">
+      {/* Always visible: hover-reveal is unreachable on touch devices. */}
+      <button type="button" onClick={onRemove} aria-label="Убрать изображение" className="absolute right-1 top-1 inline-flex size-7 items-center justify-center rounded-full bg-black/55 text-white transition-colors hover:bg-black/80 focus-ring">
         <X className="size-3.5" />
       </button>
     </div>

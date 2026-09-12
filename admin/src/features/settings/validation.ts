@@ -13,7 +13,7 @@ export function isHttpUrl(value: string): boolean {
 }
 
 /** Empty string or a valid http(s) URL. */
-export const optionalUrl = (message = 'Введите ссылку, начинающуюся с https://') => z.string().trim().refine((v) => v === '' || isHttpUrl(v), message);
+export const optionalUrl = (message = 'Введите ссылку, начинающуюся с http:// или https://') => z.string().trim().refine((v) => v === '' || isHttpUrl(v), message);
 
 /** Empty string or a syntactically valid email. */
 export const optionalEmail = z.string().trim().refine((v) => v === '' || EMAIL_RE.test(v), 'Некорректный email');

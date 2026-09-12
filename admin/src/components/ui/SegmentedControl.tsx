@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useRef, type KeyboardEvent, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 export interface SegmentOption<V extends string> {
@@ -28,13 +28,39 @@ const activeTone = {
 };
 
 export function SegmentedControl<V extends string>({ options, value, onChange, size = 'md', fullWidth, disabled, className, ...rest }: SegmentedControlProps<V>) {
+  const ref = useRef<HTMLDivElement>(null);
+  const activeIndex = options.findIndex((o) => o.value === value);
+  // The group is one tab stop; arrow keys move selection (ARIA radiogroup pattern).
+  const focusIndex = (index: number) => {
+    const opt = options[index];
+    if (!opt) return;
+    onChange(opt.value);
+    ref.current?.querySelectorAll<HTMLButtonElement>('[role="radio"]')[index]?.focus();
+  };
+  const onKeyDown = (e: KeyboardEvent, index: number) => {
+    const last = options.length - 1;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      focusIndex(index === last ? 0 : index + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      focusIndex(index === 0 ? last : index - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      focusIndex(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      focusIndex(last);
+    }
+  };
   return (
     <div
+      ref={ref}
       role="radiogroup"
       aria-label={rest['aria-label']}
       className={cn('inline-flex shrink-0 items-stretch gap-0.5 rounded-[10px] bg-zinc-100 p-0.5', fullWidth && 'flex w-full', disabled && 'opacity-60', className)}
     >
-      {options.map((o) => {
+      {options.map((o, i) => {
         const active = o.value === value;
         return (
           <button
@@ -42,8 +68,10 @@ export function SegmentedControl<V extends string>({ options, value, onChange, s
             type="button"
             role="radio"
             aria-checked={active}
+            tabIndex={disabled ? -1 : active || (activeIndex === -1 && i === 0) ? 0 : -1}
             title={o.title}
             disabled={disabled}
+            onKeyDown={(e) => onKeyDown(e, i)}
             onClick={(e) => {
               e.stopPropagation();
               onChange(o.value);

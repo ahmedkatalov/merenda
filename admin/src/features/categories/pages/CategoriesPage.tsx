@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FolderTree, ImageIcon, Pencil, Plus, Trash2 } from 'lucide-react';
 import type { Category } from '@merenda/shared';
 import { cn, pluralize } from '@/lib/utils';
@@ -12,6 +12,7 @@ import { CategoryForm } from '../components/CategoryForm';
 
 export default function CategoriesPage() {
   const menus = useMenus();
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const menuId = params.get('menuId') ?? '';
   useEffect(() => {
@@ -52,7 +53,7 @@ export default function CategoriesPage() {
         <ErrorState error={menus.error} onRetry={() => void menus.refetch()} />
       ) : noMenus ? (
         <div className="rounded-[var(--radius-card)] border border-dashed border-zinc-200 bg-white">
-          <EmptyState icon={<FolderTree />} title="Сначала создайте меню" description="Категории живут внутри меню — например «Кухня» или «Бар»." action={<Button variant="primary" onClick={() => (window.location.href = '/menus')}>Перейти к меню</Button>} />
+          <EmptyState icon={<FolderTree />} title="Сначала создайте меню" description="Категории живут внутри меню — например «Кухня» или «Бар»." action={<Button variant="primary" onClick={() => navigate('/menus')}>Перейти к меню</Button>} />
         </div>
       ) : categories.isPending || menus.isPending ? (
         <SkeletonRows rows={4} height="h-16" />
