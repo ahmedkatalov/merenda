@@ -12,6 +12,12 @@ export const AVAILABILITY_SHORT: Record<Availability, string> = {
   hidden: 'Скрыто',
 };
 
+export const AVAILABILITY_DESC: Record<Availability, string> = {
+  available: 'Гости могут добавить блюдо в корзину.',
+  unavailable: 'Видно на сайте с пометкой «нет в наличии».',
+  hidden: 'Полностью скрыто с сайта.',
+};
+
 export const ORDER_STATUS_FILTER_LABELS: Record<OrderStatus | 'all', string> = {
   new: 'Новые',
   confirmed: 'Подтверждённые',

@@ -290,12 +290,7 @@ export default function ProductEditorPage() {
               </Card>
 
               <Card title="Наличие">
-                <Controller control={control} name="availability" render={({ field }) => <AvailabilityControl value={field.value as Availability} onChange={field.onChange} fullWidth size="md" />} />
-                <p className="mt-2 text-[12.5px] text-zinc-500">
-                  {watch('availability') === 'available' && 'Гости могут добавить блюдо в корзину.'}
-                  {watch('availability') === 'unavailable' && 'Блюдо видно на сайте с пометкой «нет в наличии».'}
-                  {watch('availability') === 'hidden' && 'Блюдо полностью скрыто с сайта.'}
-                </p>
+                <Controller control={control} name="availability" render={({ field }) => <AvailabilityControl value={field.value as Availability} onChange={field.onChange} layout="stack" />} />
               </Card>
 
               <Card title="Метки" padding="sm">
