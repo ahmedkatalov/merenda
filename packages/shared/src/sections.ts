@@ -332,7 +332,7 @@ export const SECTION_DEFINITIONS: Record<SectionType, SectionDefinition> = {
       cardStyle: 'cards',
       columnsDesktop: 3,
       columnsTablet: 2,
-      columnsMobile: 1,
+      columnsMobile: 2,
       showImages: true,
       showDescriptions: true,
       showTags: true,
