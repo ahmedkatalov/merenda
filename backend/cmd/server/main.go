@@ -23,6 +23,7 @@ import (
 	"merenda/backend/internal/service/dashboard"
 	"merenda/backend/internal/service/media"
 	"merenda/backend/internal/service/orders"
+	"merenda/backend/internal/service/pos"
 	"merenda/backend/internal/service/schedules"
 	"merenda/backend/internal/service/sections"
 	"merenda/backend/internal/service/settings"
@@ -80,6 +81,12 @@ func run() error {
 	}
 
 	settingsSvc := settings.New(repos)
+	kassa := pos.New(cfg.OkvionOrderURL, cfg.OkvionOrderKey, log)
+	if kassa.Enabled() {
+		log.Info("okvion order integration enabled", "url", cfg.OkvionOrderURL)
+	} else {
+		log.Info("okvion order integration disabled (set OKVION_ORDER_KEY to enable)")
+	}
 	siteSvc := site.New(repos, settingsSvc, cfg.PublicSiteURL)
 	deps := handlers.Deps{
 		Cfg:       cfg,
@@ -90,7 +97,7 @@ func run() error {
 		Schedules: schedules.New(repos),
 		Sections:  sections.New(repos),
 		Settings:  settingsSvc,
-		Orders:    orders.New(repos, settingsSvc),
+		Orders:    orders.New(repos, settingsSvc, kassa),
 		Media:     media.New(repos, store, cfg.MaxUploadBytes(), log),
 		Site:      siteSvc,
 		Dashboard: dashboard.New(repos, settingsSvc, siteSvc, authSvc),

@@ -13,6 +13,7 @@ import (
 	"merenda/backend/internal/domain"
 	"merenda/backend/internal/repo"
 	"merenda/backend/internal/service/hours"
+	"merenda/backend/internal/service/pos"
 	"merenda/backend/internal/service/settings"
 )
 
@@ -20,12 +21,13 @@ import (
 type Service struct {
 	repos    *repo.Repos
 	settings *settings.Service
+	pos      *pos.Client
 	now      func() time.Time
 }
 
 // New creates the service.
-func New(repos *repo.Repos, settings *settings.Service) *Service {
-	return &Service{repos: repos, settings: settings, now: time.Now}
+func New(repos *repo.Repos, settings *settings.Service, kassa *pos.Client) *Service {
+	return &Service{repos: repos, settings: settings, pos: kassa, now: time.Now}
 }
 
 const (
@@ -126,12 +128,40 @@ func (s *Service) Create(ctx context.Context, req domain.CreateOrderRequest) (do
 		return domain.CreateOrderResponse{}, err
 	}
 
+	// Additionally hand the order to the POS (best-effort, never blocks the response).
+	if s.pos != nil && s.pos.Enabled() {
+		go s.pos.Send(context.Background(), s.posOrder(order))
+	}
+
 	resp := domain.CreateOrderResponse{Order: order, Message: order.WhatsappMessage}
 	if digits, ok := settings.NormalizePhoneDigits(sm.Orders.WhatsappNumber); ok && digits != "" {
 		link := WhatsappURL(digits, order.WhatsappMessage)
 		resp.WhatsappURL = &link
 	}
 	return resp, nil
+}
+
+// posOrder maps a saved order to the Okvion POS payload. Prices are per-unit in
+// whole currency units (minor/100); the order type is prepended to the comment so
+// the cashier sees «В заведении» / «На вынос».
+func (s *Service) posOrder(order domain.Order) pos.Order {
+	items := make([]pos.Item, 0, len(order.Items))
+	for _, it := range order.Items {
+		items = append(items, pos.Item{Name: it.Name, Price: it.PriceMinor / 100, Qty: it.Quantity})
+	}
+	comment := TypeLabel(order.Type)
+	if strings.TrimSpace(order.Comment) != "" {
+		comment += ". " + order.Comment
+	}
+	return pos.Order{
+		ExternalID:    "merenda-" + order.ID,
+		CustomerName:  order.CustomerName,
+		CustomerPhone: order.CustomerPhone,
+		Comment:       comment,
+		Source:        "site",
+		Total:         order.TotalMinor / 100,
+		Items:         items,
+	}
 }
 
 // mergeLines validates the items and sums duplicate product ids, keeping first-seen order.

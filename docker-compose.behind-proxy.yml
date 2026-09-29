@@ -42,6 +42,8 @@ services:
       ADMIN_SITE_URL: https://${MERENDA_ADMIN_DOMAIN:?set MERENDA_ADMIN_DOMAIN in .env}
       COOKIE_SECURE: "true"
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
+      # Optional: forward each site order to the Okvion Sales POS. Empty = off.
+      OKVION_ORDER_KEY: ${OKVION_ORDER_KEY:-}
     volumes:
       - uploads:/data/uploads
     depends_on:

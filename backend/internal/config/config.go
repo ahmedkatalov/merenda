@@ -29,6 +29,9 @@ type Config struct {
 	UploadDir       string
 	MaxUploadMB     int64
 	CookieSecure    bool
+	// Okvion Sales POS order intake (optional). Empty key disables the integration.
+	OkvionOrderURL string
+	OkvionOrderKey string
 	// TrustProxy enables X-Forwarded-For / X-Real-IP for client IP detection.
 	// Defaults to true in production (the API sits behind Caddy) and false otherwise.
 	TrustProxy bool
@@ -48,16 +51,18 @@ func Load() (Config, error) {
 	loadDotEnv()
 
 	cfg := Config{
-		AppEnv:        getEnv("APP_ENV", "development"),
-		HTTPAddr:      getEnv("HTTP_ADDR", ":8080"),
-		DatabaseURL:   getEnv("DATABASE_URL", "postgres://merenda:merenda@localhost:5432/merenda?sslmode=disable"),
-		JWTSecret:     getEnv("JWT_SECRET", ""),
-		AdminEmail:    getEnv("ADMIN_EMAIL", "admin@merenda.ru"),
-		AdminPassword: getEnv("ADMIN_PASSWORD", DefaultAdminPassword),
-		AdminName:     getEnv("ADMIN_NAME", "Владелец"),
-		PublicSiteURL: strings.TrimRight(getEnv("PUBLIC_SITE_URL", "http://localhost:5173"), "/"),
-		AdminSiteURL:  strings.TrimRight(getEnv("ADMIN_SITE_URL", "http://localhost:5174"), "/"),
-		UploadDir:     getEnv("UPLOAD_DIR", "./data/uploads"),
+		AppEnv:         getEnv("APP_ENV", "development"),
+		HTTPAddr:       getEnv("HTTP_ADDR", ":8080"),
+		DatabaseURL:    getEnv("DATABASE_URL", "postgres://merenda:merenda@localhost:5432/merenda?sslmode=disable"),
+		JWTSecret:      getEnv("JWT_SECRET", ""),
+		AdminEmail:     getEnv("ADMIN_EMAIL", "admin@merenda.ru"),
+		AdminPassword:  getEnv("ADMIN_PASSWORD", DefaultAdminPassword),
+		AdminName:      getEnv("ADMIN_NAME", "Владелец"),
+		PublicSiteURL:  strings.TrimRight(getEnv("PUBLIC_SITE_URL", "http://localhost:5173"), "/"),
+		AdminSiteURL:   strings.TrimRight(getEnv("ADMIN_SITE_URL", "http://localhost:5174"), "/"),
+		UploadDir:      getEnv("UPLOAD_DIR", "./data/uploads"),
+		OkvionOrderURL: getEnv("OKVION_ORDER_URL", "https://okvionsales.ru/api/public/orders"),
+		OkvionOrderKey: getEnv("OKVION_ORDER_KEY", ""),
 	}
 
 	var err error
