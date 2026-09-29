@@ -144,7 +144,7 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO settings (key, value) VALUES
   ('business', '{"name":"Меренда","tagline":"Кофейня","description":"Вкус · Уют · Гармония. Кофейня с домашней кухней: завтраки весь день, свежая выпечка и ароматный кофе.","logoId":null,"faviconId":null,"currency":{"code":"RUB","symbol":"₽","decimals":0},"timezone":"Europe/Moscow"}'),
   ('contacts', '{"phone":"","email":"","address":"","addressNote":"","mapUrl":"","mapEmbedUrl":"","social":[]}'),
-  ('orders',   '{"enabled":true,"whatsappNumber":"","allowDineIn":true,"allowTakeaway":true,"askName":true,"askPhone":false,"askComment":true,"minOrderMinor":0,"blockWhenClosed":true,"messageTitle":"Новый заказ — Меренда","messageFooter":""}'),
+  ('orders',   '{"enabled":true,"whatsappNumber":"","whatsappHandoff":true,"allowDineIn":true,"allowTakeaway":true,"askName":true,"askPhone":false,"askComment":true,"minOrderMinor":0,"blockWhenClosed":true,"messageTitle":"Новый заказ — Меренда","messageFooter":""}'),
   ('seo',      '{"title":"Меренда — кофейня. Меню и заказ","description":"Меню кофейни Меренда: завтраки весь день, салаты, супы, горячие блюда, кофе и десерты. Закажите онлайн.","keywords":"кофейня, меню, завтраки, кофе, заказ","ogImageId":null,"canonicalUrl":"","robotsIndex":true}'),
   ('status',   '{"mode":"auto","message":""}'),
   ('theme',    '{"preset":"elegant"}')

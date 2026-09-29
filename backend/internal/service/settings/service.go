@@ -68,7 +68,7 @@ func defaults() domain.SettingsMap {
 	return domain.SettingsMap{
 		Business: domain.BusinessSettings{Name: "Меренда", Currency: domain.Currency{Code: "RUB", Symbol: "₽", Decimals: 0}, Timezone: "Europe/Moscow"},
 		Contacts: domain.ContactSettings{Social: []domain.SocialLink{}},
-		Orders:   domain.OrderSettings{Enabled: true, AllowDineIn: true, AllowTakeaway: true, AskName: true, AskComment: true, BlockWhenClosed: true, MessageTitle: "Новый заказ"},
+		Orders:   domain.OrderSettings{Enabled: true, WhatsappHandoff: true, AllowDineIn: true, AllowTakeaway: true, AskName: true, AskComment: true, BlockWhenClosed: true, MessageTitle: "Новый заказ"},
 		Seo:      domain.SeoSettings{RobotsIndex: true},
 		Status:   domain.StatusSettings{Mode: domain.ModeAuto},
 		Theme:    theme.Elegant,

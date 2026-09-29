@@ -56,6 +56,7 @@ type ContactSettings struct {
 type OrderSettings struct {
 	Enabled         bool   `json:"enabled"`
 	WhatsappNumber  string `json:"whatsappNumber"`
+	WhatsappHandoff bool   `json:"whatsappHandoff"`
 	AllowDineIn     bool   `json:"allowDineIn"`
 	AllowTakeaway   bool   `json:"allowTakeaway"`
 	AskName         bool   `json:"askName"`
@@ -72,6 +73,7 @@ func (o OrderSettings) Public() PublicOrderSettings {
 	return PublicOrderSettings{
 		Enabled:            o.Enabled,
 		WhatsappConfigured: o.WhatsappNumber != "",
+		WhatsappHandoff:    o.WhatsappHandoff,
 		AllowDineIn:        o.AllowDineIn,
 		AllowTakeaway:      o.AllowTakeaway,
 		AskName:            o.AskName,
@@ -86,6 +88,7 @@ func (o OrderSettings) Public() PublicOrderSettings {
 type PublicOrderSettings struct {
 	Enabled            bool  `json:"enabled"`
 	WhatsappConfigured bool  `json:"whatsappConfigured"`
+	WhatsappHandoff    bool  `json:"whatsappHandoff"`
 	AllowDineIn        bool  `json:"allowDineIn"`
 	AllowTakeaway      bool  `json:"allowTakeaway"`
 	AskName            bool  `json:"askName"`

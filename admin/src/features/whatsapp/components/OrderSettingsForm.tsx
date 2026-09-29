@@ -15,7 +15,7 @@ import { hasWhatsappNumber, TEST_MESSAGE } from '../lib/buildMessage';
 import { MessagePreview } from './MessagePreview';
 import { SaveBar } from './SaveBar';
 
-type BoolField = 'enabled' | 'allowDineIn' | 'allowTakeaway' | 'askName' | 'askPhone' | 'askComment' | 'blockWhenClosed';
+type BoolField = 'enabled' | 'whatsappHandoff' | 'allowDineIn' | 'allowTakeaway' | 'askName' | 'askPhone' | 'askComment' | 'blockWhenClosed';
 
 function SwitchRow({ control, name, label, description, className }: { control: Control<OrderSettingsFormValues>; name: BoolField; label: string; description?: string; className?: string }) {
   return (
@@ -44,7 +44,7 @@ export function OrderSettingsForm({ initial }: { initial: OrderSettings }) {
 
   const values = watch();
   const canTest = hasWhatsappNumber(values.whatsappNumber);
-  const missingNumber = values.enabled && values.whatsappNumber.trim() === '';
+  const missingNumber = values.enabled && values.whatsappHandoff && values.whatsappNumber.trim() === '';
 
   const openTestChat = () => {
     window.open(buildWhatsappUrl(values.whatsappNumber, TEST_MESSAGE), '_blank', 'noopener,noreferrer');
@@ -67,44 +67,61 @@ export function OrderSettingsForm({ initial }: { initial: OrderSettings }) {
       <div className="grid gap-5 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
         <div className="space-y-5">
           {/* 1. Приём заказов */}
-          <Card title="Приём заказов" description="Главный переключатель и номер, на который приходят заказы.">
+          <Card title="Приём заказов" description="Главный переключатель и куда попадают оформленные заказы.">
             <div className="space-y-5">
               <div className="rounded-xl border border-zinc-200 px-4 py-2">
                 <SwitchRow control={control} name="enabled" label="Принимать заказы на сайте" description="Когда выключено, кнопки «В корзину» скрыты, меню остаётся видимым." className="py-2" />
               </div>
 
-              <FormField
-                label="Номер WhatsApp"
-                help="В международном формате, например +49 151 2345678. Пустое поле — заказы сохраняются только в панели."
-                error={errors.whatsappNumber?.message}
-              >
-                {(id) => (
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
-                    <Input
-                      id={id}
-                      type="tel"
-                      inputMode="tel"
-                      autoComplete="tel"
-                      placeholder="+7 999 123-45-67"
-                      prefix={<MessageCircle />}
-                      invalid={!!errors.whatsappNumber}
-                      className="min-w-0 flex-1"
-                      {...register('whatsappNumber')}
-                    />
-                    <Tooltip content={canTest ? 'Откроет чат с тестовым сообщением' : 'Введите номер, чтобы проверить'} className="w-full sm:w-auto">
-                      <Button variant="secondary" icon={<ExternalLink />} onClick={openTestChat} disabled={!canTest} className="w-full sm:w-auto">
-                        Проверить
-                      </Button>
-                    </Tooltip>
-                  </div>
-                )}
-              </FormField>
-
-              {missingNumber && (
-                <div role="status" className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-[13px] leading-snug text-amber-800">
-                  <TriangleAlert className="mt-px size-4 shrink-0" aria-hidden="true" />
-                  <span>Без номера заказы не будут отправляться в WhatsApp.</span>
+              <section>
+                <GroupTitle>Куда уходит заказ</GroupTitle>
+                <div className="rounded-xl border border-zinc-200 px-4 py-2">
+                  <SwitchRow
+                    control={control}
+                    name="whatsappHandoff"
+                    label="Отправлять заказ в WhatsApp"
+                    description="Включено — после оформления гость отправляет заказ вам в WhatsApp со своего номера. Выключено — заказ принимается только на платформе (панель и касса), без шага WhatsApp."
+                    className="py-2"
+                  />
                 </div>
+              </section>
+
+              {values.whatsappHandoff && (
+                <>
+                  <FormField
+                    label="Номер WhatsApp"
+                    help="В международном формате, например +49 151 2345678. Пустое поле — заказы сохраняются только в панели."
+                    error={errors.whatsappNumber?.message}
+                  >
+                    {(id) => (
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+                        <Input
+                          id={id}
+                          type="tel"
+                          inputMode="tel"
+                          autoComplete="tel"
+                          placeholder="+7 999 123-45-67"
+                          prefix={<MessageCircle />}
+                          invalid={!!errors.whatsappNumber}
+                          className="min-w-0 flex-1"
+                          {...register('whatsappNumber')}
+                        />
+                        <Tooltip content={canTest ? 'Откроет чат с тестовым сообщением' : 'Введите номер, чтобы проверить'} className="w-full sm:w-auto">
+                          <Button variant="secondary" icon={<ExternalLink />} onClick={openTestChat} disabled={!canTest} className="w-full sm:w-auto">
+                            Проверить
+                          </Button>
+                        </Tooltip>
+                      </div>
+                    )}
+                  </FormField>
+
+                  {missingNumber && (
+                    <div role="status" className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-[13px] leading-snug text-amber-800">
+                      <TriangleAlert className="mt-px size-4 shrink-0" aria-hidden="true" />
+                      <span>Без номера заказы не будут отправляться в WhatsApp.</span>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </Card>

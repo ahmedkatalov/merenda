@@ -320,6 +320,13 @@ export interface OrderSettings {
   enabled: boolean;
   /** E.164-ish digits, e.g. "+49 151 2345678". Empty = orders are stored only, no WhatsApp handoff. */
   whatsappNumber: string;
+  /**
+   * When true, after an order is placed the guest is offered a WhatsApp hand-off
+   * (opens WhatsApp from their own number with the order message to the venue).
+   * When false, the order is accepted on the platform only (saved to the admin
+   * panel + POS) and no WhatsApp step is shown. Independent of `whatsappNumber`.
+   */
+  whatsappHandoff: boolean;
   allowDineIn: boolean;
   allowTakeaway: boolean;
   askName: boolean;
@@ -570,6 +577,8 @@ export interface PublicOrderSettings {
   enabled: boolean;
   /** true when a WhatsApp number is configured. */
   whatsappConfigured: boolean;
+  /** true when the WhatsApp hand-off is enabled (see OrderSettings.whatsappHandoff). */
+  whatsappHandoff: boolean;
   allowDineIn: boolean;
   allowTakeaway: boolean;
   askName: boolean;
