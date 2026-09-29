@@ -32,7 +32,7 @@ export function Recommended({ section, anchorId }: { section: PageSection; ancho
         </Reveal>
       </Container>
       <div className="-mx-0">
-        <ul className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-3 scrollbar-none sm:px-6 lg:mx-auto lg:max-w-site lg:px-8 [scroll-padding-inline:1rem]">
+        <ul className="flex snap-x snap-proximity touch-pan-x overscroll-x-contain gap-4 overflow-x-auto px-4 pb-3 scrollbar-none sm:px-6 lg:mx-auto lg:max-w-site lg:px-8 [scroll-padding-inline:1rem]">
           {items.map((p, i) => {
             const menuId = menuIdByProduct.get(p.id) ?? '';
             const fallbackIcon = menus.find((m) => m.id === menuId)?.icon || 'utensils';

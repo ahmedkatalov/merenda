@@ -396,12 +396,14 @@
     gap: calc(0.875rem * var(--space-unit));
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-snap-type: x mandatory;
+    scroll-snap-type: x proximity;
     scroll-padding-inline: 1rem;
     margin-inline: -1rem;
     padding-inline: 1rem;
     padding-bottom: 0.75rem;
     overscroll-behavior-x: contain;
+    /* Horizontal swipes scroll the strip; vertical swipes scroll the page. */
+    touch-action: pan-x;
     -webkit-overflow-scrolling: touch;
   }
   .menu-strip > * {
@@ -429,6 +431,7 @@
       padding-inline: 0;
       padding-bottom: 0;
       scroll-snap-type: none;
+      touch-action: auto;
     }
     .menu-strip > * {
       width: auto;
