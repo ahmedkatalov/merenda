@@ -68,9 +68,16 @@ export function isValidTimeOfDay(value: string): value is TimeOfDay {
   return /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
 }
 
-/** Digits only for wa.me links: "+49 151 234-56" → "4915123456" */
+/**
+ * Digits only for wa.me links: "+49 151 234-56" → "4915123456".
+ * A local Russian/Kazakh number typed with the trunk prefix 8 (e.g. "8 928 …",
+ * 11 digits) is converted to its +7 country form, otherwise wa.me rejects it
+ * with "no country code".
+ */
 export function normalizeWhatsappNumber(raw: string): string {
-  return raw.replace(/\D/g, '');
+  const d = raw.replace(/\D/g, '');
+  if (d.length === 11 && d.startsWith('8')) return `7${d.slice(1)}`;
+  return d;
 }
 
 export function buildWhatsappUrl(number: string, text: string): string {

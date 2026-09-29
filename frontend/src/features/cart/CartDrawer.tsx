@@ -32,11 +32,12 @@ export default function CartDrawer() {
   const dir = index >= lastIndex.current ? 1 : -1;
   lastIndex.current = index;
 
+  const waOnly = checkout.deliveryMode === 'whatsapp';
   const title: Record<typeof checkout.step, string> = {
     cart: count > 0 ? `${t.cart.title} · ${count}` : t.cart.title,
     type: t.cart.checkout,
     details: t.cart.checkout,
-    success: t.success.title,
+    success: waOnly && checkout.result?.whatsappUrl ? t.success.whatsappTitle : t.success.title,
   };
 
   let footer: ReactNode = null;
@@ -89,7 +90,7 @@ export default function CartDrawer() {
           {checkout.step === 'cart' ? <CartItems checkout={checkout} /> : null}
           {checkout.step === 'type' ? <OrderTypeChooser allowed={checkout.allowedTypes} value={checkout.orderType} onChoose={checkout.chooseType} /> : null}
           {checkout.step === 'details' ? <CheckoutForm checkout={checkout} /> : null}
-          {checkout.step === 'success' && checkout.result ? <OrderSuccess result={checkout.result} /> : null}
+          {checkout.step === 'success' && checkout.result ? <OrderSuccess result={checkout.result} whatsappOnly={waOnly} /> : null}
         </motion.div>
       </AnimatePresence>
     </Sheet>

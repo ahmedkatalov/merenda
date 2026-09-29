@@ -78,6 +78,14 @@ func TestWhatsappURL(t *testing.T) {
 	if strings.Contains(got, "+") || !strings.Contains(got, "%20") || !strings.Contains(got, "%0A") {
 		t.Errorf("spaces must be %%20 and newlines %%0A: %s", got)
 	}
+	// A local RU/KZ number typed with trunk prefix 8 must become +7 for wa.me.
+	if ru := WhatsappURL("89280000000", "hi"); !strings.HasPrefix(ru, "https://wa.me/79280000000?") {
+		t.Errorf("leading 8 must convert to 7: %s", ru)
+	}
+	// A proper international number is left untouched.
+	if intl := WhatsappURL("79280000000", "hi"); !strings.HasPrefix(intl, "https://wa.me/79280000000?") {
+		t.Errorf("international number must pass through: %s", intl)
+	}
 }
 
 func TestMergeLines(t *testing.T) {

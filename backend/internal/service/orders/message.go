@@ -118,5 +118,15 @@ func BuildMessage(o domain.OrderSettings, cur domain.Currency, order domain.Orde
 
 // WhatsappURL builds https://wa.me/<digits>?text=<encoded> with %20 for spaces.
 func WhatsappURL(digits, message string) string {
-	return "https://wa.me/" + digits + "?text=" + strings.ReplaceAll(url.QueryEscape(message), "+", "%20")
+	return "https://wa.me/" + waCountryDigits(digits) + "?text=" + strings.ReplaceAll(url.QueryEscape(message), "+", "%20")
+}
+
+// waCountryDigits converts a local Russian/Kazakh number typed with the trunk
+// prefix 8 (11 digits, e.g. "8 928 …") to its +7 country form, which wa.me needs
+// — otherwise WhatsApp reports "no country code". Other numbers pass through.
+func waCountryDigits(digits string) string {
+	if len(digits) == 11 && digits[0] == '8' {
+		return "7" + digits[1:]
+	}
+	return digits
 }

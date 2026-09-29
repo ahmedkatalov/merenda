@@ -77,6 +77,17 @@ export function useCheckout(open: boolean) {
       setError(t.cart.previewNote);
       return;
     }
+    // In "только WhatsApp" mode, open WhatsApp right away. We reserve a tab inside
+    // the click gesture and point it at the order URL once it is created — mobile
+    // browsers block a window.open that happens after the await.
+    let waTab: Window | null = null;
+    if (site.orders.orderDelivery === 'whatsapp') {
+      try {
+        waTab = window.open('', '_blank');
+      } catch {
+        waTab = null;
+      }
+    }
     try {
       const res = await mutation.mutateAsync({
         type: orderType,
@@ -88,7 +99,12 @@ export function useCheckout(open: boolean) {
       setResult(res);
       clear();
       setStep('success');
+      if (waTab) {
+        if (res.whatsappUrl) waTab.location.href = res.whatsappUrl;
+        else waTab.close();
+      }
     } catch (e) {
+      waTab?.close();
       if (e instanceof ApiRequestError) {
         const fieldMsg = Object.values(e.fields)[0];
         setError(fieldMsg ? `${e.message} ${fieldMsg}` : e.message || t.checkout.errorGeneric);
@@ -115,6 +131,7 @@ export function useCheckout(open: boolean) {
     askAny,
     error,
     result,
+    deliveryMode: site.orders.orderDelivery,
     submitting: mutation.isPending,
     isPreview,
     start,

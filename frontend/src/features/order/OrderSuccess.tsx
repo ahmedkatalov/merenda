@@ -15,9 +15,12 @@ function openWhatsapp(url: string): void {
   if (!win) window.location.href = url;
 }
 
-export function OrderSuccess({ result }: { result: CreateOrderResponse }) {
+export function OrderSuccess({ result, whatsappOnly = false }: { result: CreateOrderResponse; whatsappOnly?: boolean }) {
   const [copied, copy] = useCopy();
   const { order, whatsappUrl, message } = result;
+  // In "только WhatsApp" mode the order is confirmed by sending the message, so
+  // the screen asks for that step instead of declaring the order already done.
+  const waFlow = whatsappOnly && !!whatsappUrl;
 
   return (
     <div className="flex flex-col items-center gap-5 py-8 text-center">
@@ -32,19 +35,19 @@ export function OrderSuccess({ result }: { result: CreateOrderResponse }) {
         </motion.span>
       </motion.span>
       <div>
-        <h3 className="text-[1.5rem]">{t.success.title}</h3>
+        <h3 className="text-[1.5rem]">{waFlow ? t.success.whatsappTitle : t.success.title}</h3>
         <p className="mt-1 text-[1.0625rem] font-semibold text-accent">
           {t.success.number}{order.number}
         </p>
       </div>
-      {message ? <p className="max-w-sm text-muted">{message}</p> : null}
+      {!waFlow && message ? <p className="max-w-sm text-muted">{message}</p> : null}
       {whatsappUrl ? (
         <div className="flex w-full max-w-sm flex-col gap-2.5">
           <Button size="lg" full onClick={() => openWhatsapp(whatsappUrl)}>
             <MessageCircle className="size-5" />
             {t.success.whatsapp}
           </Button>
-          <p className="text-[0.8125rem] text-muted">{t.success.whatsappHint}</p>
+          <p className="text-[0.8125rem] text-muted">{waFlow ? t.success.whatsappAuto : t.success.whatsappHint}</p>
           <Button variant="ghost" size="md" full onClick={() => void copy(order.whatsappMessage)}>
             {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
             {copied ? t.common.copied : t.success.copyMessage}
