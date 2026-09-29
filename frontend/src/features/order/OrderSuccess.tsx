@@ -1,9 +1,19 @@
 import { motion } from 'motion/react';
 import { Check, Copy, MessageCircle } from 'lucide-react';
 import type { CreateOrderResponse } from '@merenda/shared';
-import { Button, ButtonLink } from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import { useCopy } from '@/lib/hooks';
 import { t } from '@/lib/i18n';
+
+/**
+ * Opens WhatsApp from within the click gesture. A plain <a target="_blank"> to a
+ * wa.me link often silently does nothing inside a modal on mobile browsers, so we
+ * open a tab explicitly and fall back to same-tab navigation when it is blocked.
+ */
+function openWhatsapp(url: string): void {
+  const win = window.open(url, '_blank', 'noopener,noreferrer');
+  if (!win) window.location.href = url;
+}
 
 export function OrderSuccess({ result }: { result: CreateOrderResponse }) {
   const [copied, copy] = useCopy();
@@ -30,10 +40,10 @@ export function OrderSuccess({ result }: { result: CreateOrderResponse }) {
       {message ? <p className="max-w-sm text-muted">{message}</p> : null}
       {whatsappUrl ? (
         <div className="flex w-full max-w-sm flex-col gap-2.5">
-          <ButtonLink href={whatsappUrl} target="_blank" rel="noopener" size="lg" full>
+          <Button size="lg" full onClick={() => openWhatsapp(whatsappUrl)}>
             <MessageCircle className="size-5" />
             {t.success.whatsapp}
-          </ButtonLink>
+          </Button>
           <p className="text-[0.8125rem] text-muted">{t.success.whatsappHint}</p>
           <Button variant="ghost" size="md" full onClick={() => void copy(order.whatsappMessage)}>
             {copied ? <Check className="size-4" /> : <Copy className="size-4" />}

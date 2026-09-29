@@ -52,11 +52,18 @@ type ContactSettings struct {
 	Social      []SocialLink `json:"social"`
 }
 
+// Order delivery modes (OrderSettings.OrderDelivery).
+const (
+	DeliveryWhatsapp = "whatsapp" // guest is sent to WhatsApp only
+	DeliveryAdmin    = "admin"    // handled in the admin panel only, no WhatsApp step
+	DeliveryBoth     = "both"     // admin panel and WhatsApp
+)
+
 // OrderSettings mirrors `OrderSettings`.
 type OrderSettings struct {
 	Enabled         bool   `json:"enabled"`
 	WhatsappNumber  string `json:"whatsappNumber"`
-	WhatsappHandoff bool   `json:"whatsappHandoff"`
+	OrderDelivery   string `json:"orderDelivery"`
 	AllowDineIn     bool   `json:"allowDineIn"`
 	AllowTakeaway   bool   `json:"allowTakeaway"`
 	AskName         bool   `json:"askName"`
@@ -68,12 +75,18 @@ type OrderSettings struct {
 	MessageFooter   string `json:"messageFooter"`
 }
 
+// WhatsappHandoff reports whether the guest should be offered the WhatsApp
+// hand-off after ordering (every mode except admin-only).
+func (o OrderSettings) WhatsappHandoff() bool {
+	return o.OrderDelivery != DeliveryAdmin
+}
+
 // Public strips the WhatsApp number for the client site.
 func (o OrderSettings) Public() PublicOrderSettings {
 	return PublicOrderSettings{
 		Enabled:            o.Enabled,
 		WhatsappConfigured: o.WhatsappNumber != "",
-		WhatsappHandoff:    o.WhatsappHandoff,
+		OrderDelivery:      o.OrderDelivery,
 		AllowDineIn:        o.AllowDineIn,
 		AllowTakeaway:      o.AllowTakeaway,
 		AskName:            o.AskName,
@@ -86,16 +99,16 @@ func (o OrderSettings) Public() PublicOrderSettings {
 
 // PublicOrderSettings mirrors `PublicOrderSettings`.
 type PublicOrderSettings struct {
-	Enabled            bool  `json:"enabled"`
-	WhatsappConfigured bool  `json:"whatsappConfigured"`
-	WhatsappHandoff    bool  `json:"whatsappHandoff"`
-	AllowDineIn        bool  `json:"allowDineIn"`
-	AllowTakeaway      bool  `json:"allowTakeaway"`
-	AskName            bool  `json:"askName"`
-	AskPhone           bool  `json:"askPhone"`
-	AskComment         bool  `json:"askComment"`
-	MinOrderMinor      int64 `json:"minOrderMinor"`
-	BlockWhenClosed    bool  `json:"blockWhenClosed"`
+	Enabled            bool   `json:"enabled"`
+	WhatsappConfigured bool   `json:"whatsappConfigured"`
+	OrderDelivery      string `json:"orderDelivery"`
+	AllowDineIn        bool   `json:"allowDineIn"`
+	AllowTakeaway      bool   `json:"allowTakeaway"`
+	AskName            bool   `json:"askName"`
+	AskPhone           bool   `json:"askPhone"`
+	AskComment         bool   `json:"askComment"`
+	MinOrderMinor      int64  `json:"minOrderMinor"`
+	BlockWhenClosed    bool   `json:"blockWhenClosed"`
 }
 
 // SeoSettings mirrors `SeoSettings`.

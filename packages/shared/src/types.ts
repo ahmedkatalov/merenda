@@ -29,6 +29,17 @@ export const AVAILABILITY_VALUES: Availability[] = ['available', 'unavailable', 
 export type OrderType = 'dine_in' | 'takeaway';
 export const ORDER_TYPE_VALUES: OrderType[] = ['dine_in', 'takeaway'];
 
+/**
+ * Where a placed order is delivered to the owner:
+ * - `whatsapp` — the guest is sent to WhatsApp (from their own number to the venue);
+ * - `admin`    — the order is handled in the admin panel only, no WhatsApp step;
+ * - `both`     — admin panel and WhatsApp.
+ * The order is always stored server-side and always forwarded to the POS,
+ * independent of this setting.
+ */
+export type OrderDelivery = 'whatsapp' | 'admin' | 'both';
+export const ORDER_DELIVERY_VALUES: OrderDelivery[] = ['whatsapp', 'admin', 'both'];
+
 export type OrderStatus = 'new' | 'confirmed' | 'completed' | 'cancelled';
 export const ORDER_STATUS_VALUES: OrderStatus[] = ['new', 'confirmed', 'completed', 'cancelled'];
 
@@ -320,13 +331,8 @@ export interface OrderSettings {
   enabled: boolean;
   /** E.164-ish digits, e.g. "+49 151 2345678". Empty = orders are stored only, no WhatsApp handoff. */
   whatsappNumber: string;
-  /**
-   * When true, after an order is placed the guest is offered a WhatsApp hand-off
-   * (opens WhatsApp from their own number with the order message to the venue).
-   * When false, the order is accepted on the platform only (saved to the admin
-   * panel + POS) and no WhatsApp step is shown. Independent of `whatsappNumber`.
-   */
-  whatsappHandoff: boolean;
+  /** How a placed order reaches the owner. See {@link OrderDelivery}. */
+  orderDelivery: OrderDelivery;
   allowDineIn: boolean;
   allowTakeaway: boolean;
   askName: boolean;
@@ -577,8 +583,8 @@ export interface PublicOrderSettings {
   enabled: boolean;
   /** true when a WhatsApp number is configured. */
   whatsappConfigured: boolean;
-  /** true when the WhatsApp hand-off is enabled (see OrderSettings.whatsappHandoff). */
-  whatsappHandoff: boolean;
+  /** How a placed order reaches the owner. See {@link OrderDelivery}. */
+  orderDelivery: OrderDelivery;
   allowDineIn: boolean;
   allowTakeaway: boolean;
   askName: boolean;

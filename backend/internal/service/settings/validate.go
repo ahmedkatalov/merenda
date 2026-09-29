@@ -166,6 +166,11 @@ func validateOrders(raw json.RawMessage) (any, error) {
 	}
 	f := domain.Fields{}
 	v.WhatsappNumber = strings.TrimSpace(v.WhatsappNumber)
+	switch v.OrderDelivery {
+	case domain.DeliveryWhatsapp, domain.DeliveryAdmin, domain.DeliveryBoth:
+	default:
+		f.Add("orderDelivery", "Выберите режим приёма заказов")
+	}
 	v.MessageTitle = strings.TrimSpace(v.MessageTitle)
 	v.MessageFooter = strings.TrimSpace(v.MessageFooter)
 	if v.WhatsappNumber != "" {

@@ -134,9 +134,10 @@ func (s *Service) Create(ctx context.Context, req domain.CreateOrderRequest) (do
 	}
 
 	resp := domain.CreateOrderResponse{Order: order, Message: order.WhatsappMessage}
-	// Offer the WhatsApp hand-off only when enabled and a number is configured.
-	// When off, the order is accepted on the platform only (admin panel + POS).
-	if sm.Orders.WhatsappHandoff {
+	// Offer the WhatsApp hand-off unless the mode is admin-only, and only when a
+	// number is configured. The order itself is always stored and always sent to
+	// the POS regardless of the mode.
+	if sm.Orders.WhatsappHandoff() {
 		if digits, ok := settings.NormalizePhoneDigits(sm.Orders.WhatsappNumber); ok && digits != "" {
 			link := WhatsappURL(digits, order.WhatsappMessage)
 			resp.WhatsappURL = &link

@@ -1,4 +1,4 @@
-import type { Currency, OrderStatus, OrderType, ScheduleDay, TimeOfDay } from './types';
+import type { Currency, OrderDelivery, OrderStatus, OrderType, ScheduleDay, TimeOfDay } from './types';
 
 export const DEFAULT_CURRENCY: Currency = { code: 'RUB', symbol: '₽', decimals: 0 };
 
@@ -29,6 +29,12 @@ export const WEEKDAY_SHORT_RU = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб',
 export const ORDER_TYPE_LABELS: Record<OrderType, string> = {
   dine_in: 'В заведении',
   takeaway: 'На вынос',
+};
+
+export const ORDER_DELIVERY_LABELS: Record<OrderDelivery, string> = {
+  whatsapp: 'Только WhatsApp',
+  admin: 'Только в админке',
+  both: 'И туда, и сюда',
 };
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {

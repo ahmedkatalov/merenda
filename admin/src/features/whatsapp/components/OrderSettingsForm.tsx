@@ -3,11 +3,11 @@ import { Controller, useForm, type Control } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { ExternalLink, MessageCircle, TriangleAlert } from 'lucide-react';
-import { buildWhatsappUrl, type OrderSettings } from '@merenda/shared';
+import { buildWhatsappUrl, ORDER_DELIVERY_LABELS, ORDER_DELIVERY_VALUES, type OrderSettings } from '@merenda/shared';
 import { errorMessage } from '@/lib/api';
 import { applyServerErrors } from '@/lib/forms';
 import { cn } from '@/lib/utils';
-import { Button, Card, FormField, Input, MoneyInput, Switch, Textarea, Tooltip } from '@/components/ui';
+import { Button, Card, FormField, Input, MoneyInput, SegmentedControl, Switch, Textarea, Tooltip } from '@/components/ui';
 import { UnsavedGuard } from '@/components/UnsavedGuard';
 import { useSaveSetting } from '@/features/settings/hooks';
 import { orderSettingsSchema, type OrderSettingsFormValues } from '../lib/schema';
@@ -15,7 +15,13 @@ import { hasWhatsappNumber, TEST_MESSAGE } from '../lib/buildMessage';
 import { MessagePreview } from './MessagePreview';
 import { SaveBar } from './SaveBar';
 
-type BoolField = 'enabled' | 'whatsappHandoff' | 'allowDineIn' | 'allowTakeaway' | 'askName' | 'askPhone' | 'askComment' | 'blockWhenClosed';
+type BoolField = 'enabled' | 'allowDineIn' | 'allowTakeaway' | 'askName' | 'askPhone' | 'askComment' | 'blockWhenClosed';
+
+const DELIVERY_HINT: Record<OrderSettingsFormValues['orderDelivery'], string> = {
+  whatsapp: 'После оформления гость отправляет заказ вам в WhatsApp со своего номера. Заказ также сохраняется в панели и уходит в кассу.',
+  admin: 'Заказ принимается в админ-панели (и в кассе). Шага с WhatsApp у гостя нет.',
+  both: 'И отправка в WhatsApp гостем, и сохранение в панели (и в кассе).',
+};
 
 function SwitchRow({ control, name, label, description, className }: { control: Control<OrderSettingsFormValues>; name: BoolField; label: string; description?: string; className?: string }) {
   return (
@@ -44,7 +50,8 @@ export function OrderSettingsForm({ initial }: { initial: OrderSettings }) {
 
   const values = watch();
   const canTest = hasWhatsappNumber(values.whatsappNumber);
-  const missingNumber = values.enabled && values.whatsappHandoff && values.whatsappNumber.trim() === '';
+  const needsWhatsapp = values.orderDelivery !== 'admin';
+  const missingNumber = values.enabled && needsWhatsapp && values.whatsappNumber.trim() === '';
 
   const openTestChat = () => {
     window.open(buildWhatsappUrl(values.whatsappNumber, TEST_MESSAGE), '_blank', 'noopener,noreferrer');
@@ -75,18 +82,25 @@ export function OrderSettingsForm({ initial }: { initial: OrderSettings }) {
 
               <section>
                 <GroupTitle>Куда уходит заказ</GroupTitle>
-                <div className="rounded-xl border border-zinc-200 px-4 py-2">
-                  <SwitchRow
-                    control={control}
-                    name="whatsappHandoff"
-                    label="Отправлять заказ в WhatsApp"
-                    description="Включено — после оформления гость отправляет заказ вам в WhatsApp со своего номера. Выключено — заказ принимается только на платформе (панель и касса), без шага WhatsApp."
-                    className="py-2"
-                  />
-                </div>
+                <Controller
+                  control={control}
+                  name="orderDelivery"
+                  render={({ field }) => (
+                    <>
+                      <SegmentedControl
+                        aria-label="Режим приёма заказов"
+                        fullWidth
+                        value={field.value}
+                        onChange={field.onChange}
+                        options={ORDER_DELIVERY_VALUES.map((v) => ({ value: v, label: ORDER_DELIVERY_LABELS[v] }))}
+                      />
+                      <p className="mt-2 text-[13px] leading-snug text-zinc-500">{DELIVERY_HINT[field.value]}</p>
+                    </>
+                  )}
+                />
               </section>
 
-              {values.whatsappHandoff && (
+              {needsWhatsapp && (
                 <>
                   <FormField
                     label="Номер WhatsApp"

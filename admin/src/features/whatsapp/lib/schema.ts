@@ -11,7 +11,7 @@ export const orderSettingsSchema = z
       .trim()
       .max(32, 'Не больше 32 символов')
       .refine((v) => v === '' || WHATSAPP_NUMBER_RE.test(v), 'Введите номер в международном формате'),
-    whatsappHandoff: z.boolean(),
+    orderDelivery: z.enum(['whatsapp', 'admin', 'both']),
     allowDineIn: z.boolean(),
     allowTakeaway: z.boolean(),
     askName: z.boolean(),
