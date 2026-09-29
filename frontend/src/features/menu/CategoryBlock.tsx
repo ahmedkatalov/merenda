@@ -1,5 +1,6 @@
 import type { MenuSectionSettings, Product, PublicCategory } from '@merenda/shared';
 import { MediaImage } from '@/components/ui/MediaImage';
+import { Reveal } from '@/components/motion/Reveal';
 import { cn } from '@/lib/cn';
 import { ProductCard } from './ProductCard';
 import { ProductCompactRow } from './ProductCompactRow';
@@ -17,7 +18,11 @@ interface Props {
 
 export function CategoryBlock({ category, products, menuId, settings, fallbackIcon, columns }: Props) {
   const compact = settings.cardStyle === 'compact';
-  const sizes = `(min-width: 1024px) ${Math.round(100 / columns.desktop)}vw, (min-width: 768px) ${Math.round(100 / columns.tablet)}vw, ${Math.round(100 / columns.mobile)}vw`;
+  const cards = settings.cardStyle === 'cards';
+  // Cards on phones scroll horizontally at a fixed ~280px width, so ask for that
+  // size on mobile instead of a full-width image.
+  const mobileSize = cards ? '280px' : `${Math.round(100 / columns.mobile)}vw`;
+  const sizes = `(min-width: 1024px) ${Math.round(100 / columns.desktop)}vw, (min-width: 768px) ${Math.round(100 / columns.tablet)}vw, ${mobileSize}`;
 
   return (
     <section id={categoryAnchor(category.id)} aria-labelledby={`${categoryAnchor(category.id)}-title`} className="mb-10 md:mb-14" style={{ scrollMarginTop: 'calc(var(--sticky-top) + var(--catnav-h) + 12px)' }}>
@@ -35,18 +40,22 @@ export function CategoryBlock({ category, products, menuId, settings, fallbackIc
         </div>
       </header>
       <div
-        className={cn('product-grid', compact && 'gap-x-10 gap-y-1 md:gap-y-1')}
+        className={cn(cards ? 'menu-strip scrollbar-none' : 'product-grid', compact && 'gap-x-10 gap-y-1 md:gap-y-1')}
         style={{
           ['--cols-mobile' as string]: columns.mobile,
           ['--cols-tablet' as string]: columns.tablet,
           ['--cols-desktop' as string]: columns.desktop,
         }}
       >
-        {products.map((product) => {
+        {products.map((product, i) => {
           const props = { product, menuId, settings, fallbackIcon, sizes };
           if (settings.cardStyle === 'list') return <ProductRow key={product.id} {...props} />;
           if (compact) return <ProductCompactRow key={product.id} {...props} />;
-          return <ProductCard key={product.id} {...props} />;
+          return (
+            <Reveal key={product.id} as="div" delay={Math.min(i, 6) * 0.04}>
+              <ProductCard {...props} className="h-full" />
+            </Reveal>
+          );
         })}
       </div>
     </section>

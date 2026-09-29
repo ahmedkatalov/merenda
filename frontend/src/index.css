@@ -386,6 +386,60 @@
     }
   }
 
+  /*
+   * Menu cards on phones: an edge-to-edge horizontal snap strip (like the
+   * "Рекомендуем" row). From the tablet breakpoint up it becomes the regular
+   * grid, using the same --cols-tablet / --cols-desktop variables.
+   */
+  .menu-strip {
+    display: flex;
+    gap: calc(0.875rem * var(--space-unit));
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1rem;
+    margin-inline: -1rem;
+    padding-inline: 1rem;
+    padding-bottom: 0.75rem;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .menu-strip > * {
+    flex: 0 0 auto;
+    width: 16rem;
+    scroll-snap-align: start;
+  }
+  @media (min-width: 640px) {
+    .menu-strip {
+      margin-inline: -1.5rem;
+      padding-inline: 1.5rem;
+      scroll-padding-inline: 1.5rem;
+    }
+    .menu-strip > * {
+      width: 17.5rem;
+    }
+  }
+  @media (min-width: 768px) {
+    .menu-strip {
+      display: grid;
+      grid-template-columns: repeat(var(--cols-tablet, 2), minmax(0, 1fr));
+      gap: calc(1.125rem * var(--space-unit));
+      overflow: visible;
+      margin-inline: 0;
+      padding-inline: 0;
+      padding-bottom: 0;
+      scroll-snap-type: none;
+    }
+    .menu-strip > * {
+      width: auto;
+    }
+  }
+  @media (min-width: 1024px) {
+    .menu-strip {
+      grid-template-columns: repeat(var(--cols-desktop, 3), minmax(0, 1fr));
+    }
+  }
+
   .gallery-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
